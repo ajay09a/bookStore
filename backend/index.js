@@ -36,7 +36,7 @@ app.post('/books', async(req, res)=>{
         return res.status(500).send({message: error.message})
     }
 })
-
+//route to get all the books
 app.get('/books', async(req, res)=>{
     try {
         const books = await Book.find({});
@@ -44,6 +44,16 @@ app.get('/books', async(req, res)=>{
             count: books.length,
             data: books
         })
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message});
+    }
+})
+//route to get the book by id
+app.get('/books/:id', async(req, res)=>{
+    try {
+        const book = await Book.findById(id);
+        return res.status(200).json(book)
     } catch (error) {
         console.log(error.message);
         res.status(500).send({message: error.message});
