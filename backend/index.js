@@ -52,6 +52,7 @@ app.get('/books', async(req, res)=>{
 //route to get the book by id
 app.get('/books/:id', async(req, res)=>{
     try {
+        const {id} = req.params;
         const book = await Book.findById(id);
         return res.status(200).json(book)
     } catch (error) {
@@ -59,7 +60,29 @@ app.get('/books/:id', async(req, res)=>{
         res.status(500).send({message: error.message});
     }
 })
-
+//update a book by id
+app.put('/books/:id', async(req, res)=>{
+    try {
+        if(
+            !req.body.title ||
+            !req.body.author ||
+            !req.body.publishYear
+        ){
+            return res.status(400).send({
+                message: "Send all required field: title, author and publish year"
+            })
+        }
+        const {id} = req.params;
+        const result = await Book.findByIdAndUpdate(id, req.body);
+        if(!result){
+            return res.status(404).json({message: "book not found"})
+        }
+        return res.status(200).send({message: "Book updated successfully"})
+    } catch (error) {
+        console.log(error.message);
+        res.status(500).send({message: error.message});
+    }
+})
 mongoose.connect(mongodbURL)
 .then(
     ()=>{
